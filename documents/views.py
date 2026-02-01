@@ -86,6 +86,39 @@ def admin_document_upload(request, student_id):
 
 
 @login_required
+@user_passes_test(is_admin)
+def document_view(request, document_id):
+    """
+    Admin only: View/Preview document before downloading
+    """
+    document = get_object_or_404(Document, id=document_id)
+    
+    # Determine if we can preview in browser (PDF, images)
+    filename = document.filename().lower()
+    is_previewable = (
+        filename.endswith('.pdf') or
+        filename.endswith('.jpg') or filename.endswith('.jpeg') or
+        filename.endswith('.png') or filename.endswith('.gif') or filename.endswith('.webp')
+    )
+    is_pdf = filename.endswith('.pdf')
+    
+    # Get student profile id for back link
+    try:
+        profile_id = document.student.student_profile.id
+    except Exception:
+        profile_id = None
+    
+    context = {
+        'document': document,
+        'is_previewable': is_previewable,
+        'is_pdf': is_pdf,
+        'profile_id': profile_id,
+    }
+    
+    return render(request, 'documents/view.html', context)
+
+
+@login_required
 def document_download(request, document_id):
     """
     Document Download View

@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block title %}View Document - MBBS Visa System{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2>View Document</h2>
+            <p class="text-muted mb-0">{{ document.get_document_type_display }} - {{ document.filename }}</p>
+        </div>
+        <div class="d-flex gap-2">
+            {% if profile_id %}
+            <a href="{% url 'students:student_detail' profile_id %}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Back to Student
+            </a>
+            {% endif %}
+            <a href="{% url 'students:admin_dashboard' %}" class="btn btn-outline-secondary">
+                <i class="bi bi-speedometer2 me-2"></i>Dashboard
+            </a>
+            <a href="{% url 'documents:download' document.id %}" class="btn btn-primary">
+                <i class="bi bi-download me-2"></i>Download
+            </a>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white border-bottom">
+            <h5 class="mb-0">
+                <i class="bi bi-file-earmark me-2"></i>Document Preview - View first, then download after confirming
+            </h5>
+        </div>
+        <div class="card-body p-0">
+            {% if is_previewable %}
+                {% if is_pdf %}
+                <div class="p-3">
+                    <iframe 
+                        src="{{ document.file.url }}" 
+                        class="w-100 border rounded" 
+                        style="height: 80vh; min-height: 500px;"
+                        title="Document Preview">
+                    </iframe>
+                </div>
+                {% else %}
+                <div class="p-3 text-center">
+                    <img src="{{ document.file.url }}" 
+                         alt="Document Preview" 
+                         class="img-fluid rounded shadow-sm"
+                         style="max-height: 80vh;">
+                </div>
+                {% endif %}
+            {% else %}
+            <div class="p-5 text-center">
+                <i class="bi bi-file-earmark-binary" style="font-size: 4rem; color: #ccc;"></i>
+                <p class="text-muted mt-3">This file type cannot be previewed in browser.</p>
+                <a href="{% url 'documents:download' document.id %}" class="btn btn-primary mt-2">
+                    <i class="bi bi-download me-2"></i>Download to View
+                </a>
+            </div>
+            {% endif %}
+        </div>
+        <div class="card-footer bg-white border-top d-flex justify-content-between align-items-center">
+            <div class="small text-muted">
+                Student: <strong>{{ document.student.get_full_name|default:document.student.username }}</strong>
+                | Type: {{ document.get_document_type_display }}
+                | Size: {{ document.file_size }} KB
+            </div>
+            <a href="{% url 'documents:download' document.id %}" class="btn btn-primary">
+                <i class="bi bi-download me-2"></i>Confirm & Download
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

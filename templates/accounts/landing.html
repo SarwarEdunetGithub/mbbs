@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aspire Abroad - MBBS Visa Management | Study in Russia</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary: #0d6efd;
+            --primary-dark: #0a58ca;
+            --dark: #1a1a2e;
+            --light: #f8f9fa;
+        }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; overflow-x: hidden; }
+        .navbar { background: #fff !important; box-shadow: 0 2px 20px rgba(0,0,0,.08); padding: 0.75rem 0; }
+        .navbar-brand { font-weight: 700; font-size: 1.5rem; color: var(--dark) !important; }
+        .navbar-brand span { color: var(--primary); }
+        .nav-link { font-weight: 500; color: #333 !important; margin: 0 0.5rem; }
+        .nav-link:hover { color: var(--primary) !important; }
+        .btn-signup { background: var(--primary); color: #fff !important; padding: 0.5rem 1.25rem; border-radius: 8px; font-weight: 600; }
+        .btn-signup:hover { background: var(--primary-dark); color: #fff; }
+        .btn-login { border: 2px solid var(--primary); color: var(--primary) !important; padding: 0.5rem 1.25rem; border-radius: 8px; font-weight: 600; }
+        .btn-login:hover { background: var(--primary); color: #fff !important; }
+        .hero { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); min-height: 90vh; display: flex; align-items: center; color: #fff; position: relative; overflow: hidden; }
+        .hero::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); opacity: 0.5; }
+        .hero-content { position: relative; z-index: 1; }
+        .hero h1 { font-size: 3rem; font-weight: 800; line-height: 1.2; }
+        .hero .lead { font-size: 1.25rem; opacity: 0.9; }
+        .section-title { font-weight: 700; font-size: 2rem; color: var(--dark); margin-bottom: 1rem; }
+        .section-subtitle { color: #6c757d; margin-bottom: 2rem; }
+        .card-feature { border: none; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,.08); transition: transform .3s, box-shadow .3s; }
+        .card-feature:hover { transform: translateY(-5px); box-shadow: 0 8px 30px rgba(0,0,0,.12); }
+        .icon-box { width: 60px; height: 60px; border-radius: 12px; background: linear-gradient(135deg, var(--primary), #4a90e2); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 1.5rem; }
+        .cta-section { background: linear-gradient(135deg, var(--primary) 0%, #4a90e2 100%); color: #fff; padding: 4rem 0; }
+        .footer { background: #1a1a2e; color: #fff; padding: 3rem 0 1.5rem; }
+        .footer a { color: rgba(255,255,255,.8); text-decoration: none; }
+        .footer a:hover { color: #fff; }
+        @media (max-width: 768px) { .hero h1 { font-size: 2rem; } }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'accounts:landing' %}">
+                <i class="bi bi-mortarboard-fill me-2"></i>Aspire<span>Abroad</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-lg-center">
+                    <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#services">Services</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#why-us">Why Us</a></li>
+                    <li class="nav-item ms-2"><a class="nav-link btn btn-login" href="{% url 'accounts:login' %}"><i class="bi bi-box-arrow-in-right me-1"></i>Login</a></li>
+                    <li class="nav-item ms-2"><a class="nav-link btn btn-signup" href="{% url 'accounts:register' %}"><i class="bi bi-person-plus me-1"></i>Sign Up</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-7 hero-content">
+                    <p class="text-uppercase fw-bold mb-2" style="letter-spacing: 3px; opacity: 0.9;">MBBS Visa Management</p>
+                    <h1 class="mb-4">Your Gateway to MBBS in Russia</h1>
+                    <p class="lead mb-4">Streamlined visa application and document management for students pursuing medical education abroad. Register now and start your journey.</p>
+                    <a href="{% url 'accounts:register' %}" class="btn btn-light btn-lg px-4 py-3 fw-semibold me-3">
+                        <i class="bi bi-person-plus me-2"></i>Get Started
+                    </a>
+                    <a href="{% url 'accounts:login' %}" class="btn btn-outline-light btn-lg px-4 py-3 fw-semibold">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>Login
+                    </a>
+                </div>
+                <div class="col-lg-5 text-center d-none d-lg-block">
+                    <i class="bi bi-mortarboard-fill" style="font-size: 12rem; opacity: 0.2;"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="py-5" id="about">
+        <div class="container py-5">
+            <div class="text-center mb-5">
+                <h2 class="section-title">About Aspire Abroad</h2>
+                <p class="section-subtitle mx-auto" style="max-width: 600px;">Your trusted partner for MBBS visa processing and document management. We simplify the entire journey from registration to approval.</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card card-feature h-100 p-4">
+                        <div class="icon-box mb-3"><i class="bi bi-shield-check"></i></div>
+                        <h5>Secure & Reliable</h5>
+                        <p class="text-muted mb-0">Your documents and data are protected with industry-standard security.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card card-feature h-100 p-4">
+                        <div class="icon-box mb-3"><i class="bi bi-speedometer2"></i></div>
+                        <h5>Easy Tracking</h5>
+                        <p class="text-muted mb-0">Track your visa status in real-time from registration to approval.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card card-feature h-100 p-4">
+                        <div class="icon-box mb-3"><i class="bi bi-headset"></i></div>
+                        <h5>Admin Support</h5>
+                        <p class="text-muted mb-0">Dedicated admin support for document verification and status updates.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="py-5 bg-light" id="services">
+        <div class="container py-5">
+            <div class="text-center mb-5">
+                <h2 class="section-title">Our Services</h2>
+                <p class="section-subtitle mx-auto" style="max-width: 600px;">Comprehensive support for your MBBS visa application process.</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-3">
+                    <div class="card card-feature h-100 p-4 text-center">
+                        <i class="bi bi-person-plus-fill text-primary mb-3" style="font-size: 2.5rem;"></i>
+                        <h6>Student Registration</h6>
+                        <p class="small text-muted mb-0">Complete visa-required details and secure account creation.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="card card-feature h-100 p-4 text-center">
+                        <i class="bi bi-file-earmark-arrow-up text-primary mb-3" style="font-size: 2.5rem;"></i>
+                        <h6>Document Upload</h6>
+                        <p class="small text-muted mb-0">Upload marksheets, Aadhaar, PAN and additional documents.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="card card-feature h-100 p-4 text-center">
+                        <i class="bi bi-eye text-primary mb-3" style="font-size: 2.5rem;"></i>
+                        <h6>Document Preview</h6>
+                        <p class="small text-muted mb-0">View documents before download. Admin verification support.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="card card-feature h-100 p-4 text-center">
+                        <i class="bi bi-graph-up-arrow text-primary mb-3" style="font-size: 2.5rem;"></i>
+                        <h6>Status Tracking</h6>
+                        <p class="small text-muted mb-0">From Registered to Approved. Real-time visa status updates.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Choose Us -->
+    <section class="py-5" id="why-us">
+        <div class="container py-5">
+            <div class="text-center mb-5">
+                <h2 class="section-title">Why Choose Aspire Abroad</h2>
+            </div>
+            <div class="row g-4 justify-content-center">
+                <div class="col-md-6 col-lg-4">
+                    <div class="d-flex align-items-start">
+                        <i class="bi bi-check-circle-fill text-success me-3 mt-1" style="font-size: 1.5rem;"></i>
+                        <div><h6>Transparent Process</h6><p class="text-muted small mb-0">Clear visibility at every step of your application.</p></div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="d-flex align-items-start">
+                        <i class="bi bi-check-circle-fill text-success me-3 mt-1" style="font-size: 1.5rem;"></i>
+                        <div><h6>Fast Processing</h6><p class="text-muted small mb-0">Efficient document handling and quick status updates.</p></div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="d-flex align-items-start">
+                        <i class="bi bi-check-circle-fill text-success me-3 mt-1" style="font-size: 1.5rem;"></i>
+                        <div><h6>Professional Support</h6><p class="text-muted small mb-0">Dedicated admin team for student assistance.</p></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container text-center">
+            <h2 class="mb-3 fw-bold">Ready to Start Your MBBS Journey?</h2>
+            <p class="mb-4 opacity-90">Register now and submit your documents for visa processing.</p>
+            <a href="{% url 'accounts:register' %}" class="btn btn-light btn-lg px-5 py-3 fw-semibold me-2">
+                <i class="bi bi-person-plus me-2"></i>Sign Up
+            </a>
+            <a href="{% url 'accounts:login' %}" class="btn btn-outline-light btn-lg px-5 py-3 fw-semibold">
+                <i class="bi bi-box-arrow-in-right me-2"></i>Login
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row mb-4">
+                <div class="col-md-6 mb-3">
+                    <h5 class="mb-3"><i class="bi bi-mortarboard-fill me-2"></i>Aspire Abroad</h5>
+                    <p class="opacity-75 small">MBBS Visa Management System. Your trusted partner for medical education abroad.</p>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <h6 class="mb-3">Quick Links</h6>
+                    <p class="mb-1"><a href="#home">Home</a></p>
+                    <p class="mb-1"><a href="{% url 'accounts:register' %}">Sign Up</a></p>
+                    <p class="mb-1"><a href="{% url 'accounts:login' %}">Login</a></p>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <h6 class="mb-3">Connect</h6>
+                    <a href="#" class="me-3"><i class="bi bi-envelope fs-5"></i></a>
+                    <a href="#"><i class="bi bi-telephone fs-5"></i></a>
+                </div>
+            </div>
+            <hr class="border-secondary">
+            <p class="text-center small opacity-75 mb-0">&copy; 2025 Aspire Abroad. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

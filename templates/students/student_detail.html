@@ -156,8 +156,8 @@
                                     </td>
                                     <td>{{ doc.uploaded_at|date:"M d, Y H:i" }}</td>
                                     <td>
-                                        <a href="{% url 'documents:download' doc.id %}" class="btn btn-sm btn-outline-primary" title="Download">
-                                            <i class="bi bi-download"></i>
+                                        <a href="{% url 'documents:view' doc.id %}" class="btn btn-sm btn-outline-primary" title="View Document">
+                                            <i class="bi bi-eye"></i> View
                                         </a>
                                         <a href="{% url 'documents:delete' doc.id %}" class="btn btn-sm btn-outline-danger" title="Delete" onclick="return confirm('Are you sure you want to delete this document?');">
                                             <i class="bi bi-trash"></i>

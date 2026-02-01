@@ -145,12 +145,12 @@
                                     </td>
                                     <td>{{ item.doc.uploaded_at|date:"M d, Y H:i" }}</td>
                                     <td>
-                                        <a href="{% url 'documents:download' item.doc.id %}" class="btn btn-sm btn-outline-primary" title="Download">
-                                            <i class="bi bi-download"></i>
+                                        <a href="{% url 'documents:view' item.doc.id %}" class="btn btn-sm btn-outline-primary" title="View Document">
+                                            <i class="bi bi-eye"></i> View
                                         </a>
                                         {% if item.profile_id %}
                                         <a href="{% url 'students:student_detail' item.profile_id %}" class="btn btn-sm btn-outline-secondary" title="View Student">
-                                            <i class="bi bi-eye"></i>
+                                            <i class="bi bi-person"></i>
                                         </a>
                                         {% endif %}
                                     </td>

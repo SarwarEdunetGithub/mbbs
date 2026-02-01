@@ -18,16 +18,10 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from django.shortcuts import redirect
-
-def home_view(request):
-    """Redirect home to login page"""
-    return redirect('accounts:login')
 
 urlpatterns = [
-    path('', home_view, name='home'),
-    path('admin/', admin.site.urls),
     path('', include('accounts.urls')),
+    path('admin/', admin.site.urls),
     path('students/', include('students.urls')),
     path('documents/', include('documents.urls')),
 ]

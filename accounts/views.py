@@ -1,5 +1,5 @@
 """
-Authentication Views: Login, Register, Logout
+Authentication Views: Login, Register, Logout, Landing Page
 """
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
@@ -7,6 +7,17 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.views.decorators.http import require_http_methods
 from .forms import StudentRegistrationForm, LoginForm
+
+
+def landing_page(request):
+    """
+    Landing Page - Redirect to dashboard if logged in
+    """
+    if request.user.is_authenticated:
+        if request.user.is_admin():
+            return redirect('students:admin_dashboard')
+        return redirect('students:dashboard')
+    return render(request, 'accounts/landing.html')
 
 
 def register_view(request):
@@ -85,4 +96,4 @@ def logout_view(request):
     from django.contrib.auth import logout
     logout(request)
     messages.success(request, 'You have been logged out successfully.')
-    return redirect('accounts:login')
+    return redirect('accounts:landing')
