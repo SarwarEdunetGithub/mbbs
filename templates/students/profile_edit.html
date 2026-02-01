@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Edit Profile - MBBS Visa Management System{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Edit Profile</h2>
+                <a href="{% url 'students:dashboard' %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
+                </a>
+            </div>
+
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="card shadow-sm border-0">
+                        <div class="card-header bg-white border-bottom">
+                            <h5 class="mb-0">
+                                <i class="bi bi-person-circle me-2"></i>Student Profile Information
+                            </h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <p class="text-muted mb-4">
+                                Please provide complete information for visa processing.
+                            </p>
+
+                            <!-- Current Photo Preview -->
+                            <div class="text-center mb-4">
+                                {% if profile.photo %}
+                                <div class="mb-3">
+                                    <img src="{{ profile.photo.url }}" alt="Current Photo" 
+                                         class="rounded-circle border shadow-sm" 
+                                         style="width: 150px; height: 150px; object-fit: cover;">
+                                </div>
+                                <p class="text-muted small">Current Photo</p>
+                                {% else %}
+                                <div class="mb-3">
+                                    <div class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center border" 
+                                         style="width: 150px; height: 150px;">
+                                        <i class="bi bi-person-fill text-secondary" style="font-size: 4rem;"></i>
+                                    </div>
+                                </div>
+                                <p class="text-muted small">No photo uploaded yet</p>
+                                {% endif %}
+                            </div>
+
+                            <hr class="mb-4">
+
+                            <form method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                
+                                <div class="mb-3">
+                                    <label for="id_photo" class="form-label">
+                                        <i class="bi bi-camera me-1"></i>Student Photo
+                                    </label>
+                                    <input type="file" name="photo" class="form-control" id="id_photo" accept="image/*">
+                                    <div class="form-text">Upload a passport-size photo (JPG, PNG). Max size: 5MB</div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="id_passport_number" class="form-label">
+                                        <i class="bi bi-passport me-1"></i>Passport Number
+                                    </label>
+                                    <input type="text" name="passport_number" class="form-control" id="id_passport_number" 
+                                           value="{{ profile.passport_number|default:'' }}" placeholder="Enter your passport number">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="id_address" class="form-label">
+                                        <i class="bi bi-house me-1"></i>Complete Address
+                                    </label>
+                                    <textarea name="address" class="form-control" id="id_address" rows="4" 
+                                              placeholder="Enter your complete residential address">{{ profile.address|default:'' }}</textarea>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary w-100 mt-3">
+                                    <i class="bi bi-check-circle me-2"></i>Save Profile
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
