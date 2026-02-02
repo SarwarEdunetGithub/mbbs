@@ -164,13 +164,32 @@ def document_delete(request, document_id):
         return redirect('students:dashboard')
     
     if request.method == 'POST':
-        student_id = document.student.id
+        # Capture profile id for redirect (student_detail expects StudentProfile.id)
+        try:
+            profile_id = document.student.student_profile.id
+        except Exception:
+            profile_id = None
+
+        # If an admin deletes a student's document, notify the student to re-upload.
+        if request.user.is_admin() and document.student_id:
+            from accounts.models import Notification
+            Notification.objects.create(
+                user=document.student,
+                message=f"An admin deleted your {document.get_document_type_display()} document. Please re-upload it."
+            )
+
         document.delete()
         messages.success(request, 'Document deleted successfully!')
         
         if request.user.is_admin():
-            return redirect('students:student_detail', student_id=student_id)
+            if profile_id is not None:
+                return redirect('students:student_detail', student_id=profile_id)
+            return redirect('students:admin_dashboard')
         else:
             return redirect('students:dashboard')
     
-    return render(request, 'documents/delete_confirm.html', {'document': document})
+    try:
+        profile_id = document.student.student_profile.id
+    except Exception:
+        profile_id = None
+    return render(request, 'documents/delete_confirm.html', {'document': document, 'profile_id': profile_id})
