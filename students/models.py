@@ -65,6 +65,19 @@ class StudentProfile(models.Model):
     def __str__(self):
         return f"{self.user.get_full_name() or self.user.username} - {self.passport_number}"
     
+    def save(self, *args, **kwargs):
+        """Normalize empty passport_number to NULL so DB unique constraint won't be violated.
+
+        Convert empty strings or whitespace-only values to None before saving.
+        """
+        if self.passport_number is not None:
+            pn = str(self.passport_number).strip()
+            if pn == '':
+                self.passport_number = None
+            else:
+                self.passport_number = pn
+        super().save(*args, **kwargs)
+
     def get_status_display_class(self):
         """Return Bootstrap class for status badge"""
         status_classes = {

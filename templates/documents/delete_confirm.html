@@ -25,7 +25,7 @@
                             <button type="submit" class="btn btn-danger">
                                 <i class="bi bi-trash me-2"></i>Yes, Delete
                             </button>
-                            <a href="{% if user.is_admin %}{% url 'students:student_detail' document.student.id %}{% else %}{% url 'students:dashboard' %}{% endif %}" class="btn btn-secondary">
+                            <a href="{% if user.is_admin and profile_id %}{% url 'students:student_detail' profile_id %}{% elif user.is_admin %}{% url 'students:admin_dashboard' %}{% else %}{% url 'students:dashboard' %}{% endif %}" class="btn btn-secondary">
                                 Cancel
                             </a>
                         </div>
