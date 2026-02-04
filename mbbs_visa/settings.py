@@ -166,3 +166,10 @@ SESSION_SAVE_EVERY_REQUEST = True
 import sys
 if 'test' in sys.argv:
     STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+
+# Forgot-password / temporary password
+PASSWORD_RESET_TEMP_VALID_MINUTES = int(config('PASSWORD_RESET_TEMP_VALID_MINUTES', default=15))
+PASSWORD_RESET_MAX_PER_USER_PER_DAY = int(config('PASSWORD_RESET_MAX_PER_USER_PER_DAY', default=2))
+PASSWORD_RESET_MAX_PER_IP_PER_HOUR = int(config('PASSWORD_RESET_MAX_PER_IP_PER_HOUR', default=10))
+SEND_EMAIL_ENABLED = config('SEND_EMAIL_ENABLED', default=True, cast=bool)
+SEND_SMS_ENABLED = config('SEND_SMS_ENABLED', default=False, cast=bool)

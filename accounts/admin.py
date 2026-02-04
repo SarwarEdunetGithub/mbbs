@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from .models import User
+from .models import User, PasswordResetAuditLog
 
 
 @admin.register(User)
@@ -18,3 +18,11 @@ class UserAdmin(BaseUserAdmin):
             'fields': ('role', 'phone_number', 'email')
         }),
     )
+
+
+@admin.register(PasswordResetAuditLog)
+class PasswordResetAuditLogAdmin(admin.ModelAdmin):
+    list_display = ['requested_at', 'user', 'result', 'email_attempted', 'email_success', 'sms_attempted', 'sms_success', 'ip_address']
+    list_filter = ['result']
+    readonly_fields = ['requested_at']
+    search_fields = ['ip_address', 'user_agent']

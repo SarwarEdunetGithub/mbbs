@@ -21,10 +21,10 @@
 <body>
     <!-- Navigation -->
     {% if user.is_authenticated %}
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+    <nav class="navbar navbar-expand-lg navbar-primary sticky-top bg-white shadow-sm" role="navigation" aria-label="Main">
         <div class="container-fluid">
             <a class="navbar-brand fw-bold" href="{% if user.is_admin %}{% url 'students:admin_dashboard' %}{% else %}{% url 'students:dashboard' %}{% endif %}">
-                <img src="{% static 'images/logonew.png' %}" alt="Aspire Abroad" width="30" height="30" class="d-inline-block align-text-top me-2">
+                <img src="{% static 'images/brandnew.png' %}" alt="AspireAbroad" width="190" class="d-inline-block align-text-top me-2">
             
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -95,20 +95,16 @@
 
     <!-- Footer -->
     {% if user.is_authenticated %}
-    <footer class="bg-light text-center py-3 mt-5">
+    <footer class="app-footer text-center py-3 mt-5">
         <div class="container">
-            <p class="text-muted mb-0">
-                &copy; 2025 Aspire Abroad. All rights reserved.
-            </p>
+            <p class="text-muted mb-0">&copy; 2025 Aspire Abroad. All rights reserved.</p>
         </div>
     </footer>
     {% endif %}
 
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Custom JS -->
-    <script src="{% static 'js/custom.js' %}"></script>
-    
+    <script src="{% static 'js/app.js' %}"></script>
     {% block extra_js %}{% endblock %}
 </body>
 </html>

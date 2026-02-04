@@ -4,19 +4,15 @@
 {% block title %}Admin Dashboard - MBBS Visa Management System{% endblock %}
 
 {% block content %}
-<div class="container-fluid px-4">
-    <!-- Page Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h2 class="mb-1">Admin Dashboard</h2>
-            <p class="text-muted">Manage student registrations and visa applications</p>
-        </div>
-    </div>
+<div class="container-fluid px-4 py-3 py-md-4">
+    <header class="mb-4">
+        <h1 class="h2 mb-1">Admin Dashboard</h1>
+        <p class="text-muted mb-0">Manage student registrations and visa applications</p>
+    </header>
 
-    <!-- Analytics Cards -->
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="card shadow-sm border-0 bg-primary text-white">
+    <section class="row g-3 g-md-4 mb-4" aria-label="Statistics">
+        <div class="col-6 col-md-3">
+            <div class="card theme-card border-0 text-white" style="background: #0046FF;">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
@@ -28,8 +24,9 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card shadow-sm border-0 bg-success text-white">
+        <div class="col-6 col-md-3">
+            <div class="card theme-card border-0 text-white" style="background: #27AB3C
+;">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
@@ -41,8 +38,8 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card shadow-sm border-0 bg-warning text-white">
+        <div class="col-6 col-md-3">
+            <div class="card theme-card border-0 text-dark" style="background: #eab308;">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
@@ -54,8 +51,8 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card shadow-sm border-0 bg-danger text-white">
+        <div class="col-6 col-md-3">
+            <div class="card theme-card border-0 text-white" style="background: #C3110C;">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
@@ -67,23 +64,22 @@
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
-    <!-- Status Breakdown -->
-    <div class="row mb-4">
+    <section class="row mb-4" aria-labelledby="breakdown-heading">
         <div class="col-12">
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-white border-bottom">
-                    <h5 class="mb-0">
-                        <i class="bi bi-bar-chart me-2"></i>Status Breakdown
-                    </h5>
+            <div class="card theme-card">
+                <div class="card-header">
+                    <h2 id="breakdown-heading" class="h5 mb-0">
+                        <i class="bi bi-bar-chart me-2" aria-hidden="true"></i>Status Breakdown
+                    </h2>
                 </div>
                 <div class="card-body">
-                    <div class="row">
+                    <div class="row g-3">
                         {% for status in status_breakdown %}
-                        <div class="col-md-2 mb-3">
-                            <div class="text-center p-3 bg-light rounded">
-                                <div class="fw-bold fs-4 text-primary">{{ status.count }}</div>
+                        <div class="col-6 col-md-2">
+                            <div class="text-center p-3 rounded" style="background-color: #7393B3; background: #f1f5f9;">
+                                <div class="fw-bold fs-4" style="color: var(--theme-primary);">{{ status.count }}</div>
                                 <div class="small text-muted">{{ status.visa_status }}</div>
                             </div>
                         </div>
@@ -92,16 +88,15 @@
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
-    <!-- Documents View Section -->
-    <div class="row mb-4">
+    <section class="row mb-4" aria-labelledby="recent-docs-heading">
         <div class="col-12">
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">
-                        <i class="bi bi-files me-2"></i>Recent Documents
-                    </h5>
+            <div class="card theme-card">
+                <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <h2 id="recent-docs-heading" class="h5 mb-0">
+                        <i class="bi bi-files me-2" aria-hidden="true"></i>Recent Documents
+                    </h2>
                     <span class="text-muted small">View all documents uploaded by students</span>
                 </div>
                 <div class="card-body">
@@ -161,23 +156,22 @@
                     </div>
                     {% else %}
                     <div class="text-center py-4">
-                        <i class="bi bi-inbox" style="font-size: 2.5rem; color: #ccc;"></i>
+                        <i class="bi bi-inbox text-muted" style="font-size: 2.5rem;" aria-hidden="true"></i>
                         <p class="text-muted mt-2 mb-0">No documents uploaded yet.</p>
                     </div>
                     {% endif %}
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
-    <!-- Students Table -->
-    <div class="row">
+    <section class="row" aria-labelledby="students-heading">
         <div class="col-12">
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-white border-bottom">
-                    <h5 class="mb-0">
-                        <i class="bi bi-table me-2"></i>All Registered Students
-                    </h5>
+            <div class="card theme-card">
+                <div class="card-header">
+                    <h2 id="students-heading" class="h5 mb-0">
+                        <i class="bi bi-table me-2" aria-hidden="true"></i>All Registered Students
+                    </h2>
                 </div>
                 <div class="card-body">
                     {% if students %}
@@ -272,13 +266,13 @@
                     {% endif %}
                     {% else %}
                     <div class="text-center py-5">
-                        <i class="bi bi-inbox" style="font-size: 3rem; color: #ccc;"></i>
+                        <i class="bi bi-inbox text-muted" style="font-size: 3rem;" aria-hidden="true"></i>
                         <p class="text-muted mt-3">No students registered yet.</p>
                     </div>
                     {% endif %}
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 </div>
 {% endblock %}

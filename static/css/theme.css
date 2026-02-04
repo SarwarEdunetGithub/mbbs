@@ -248,6 +248,49 @@ textarea:focus-visible,
   text-decoration: underline;
 }
 
+/* App navbar (authenticated) – sticky, theme primary */
+.app-navbar {
+  background-color: var(--theme-primary) !important;
+  min-height: var(--theme-navbar-height);
+}
+.app-navbar .navbar-brand {
+  color: rgba(255, 255, 255, 0.95) !important;
+}
+.app-navbar .nav-link {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+.app-navbar .nav-link:hover,
+.app-navbar .nav-link:focus {
+  color: #fff !important;
+}
+.app-navbar .dropdown-menu {
+  border-radius: var(--theme-radius);
+  border-color: var(--theme-border);
+}
+.app-navbar .dropdown-item:focus-visible {
+  box-shadow: var(--theme-focus-ring);
+}
+
+/* App footer */
+.app-footer {
+  background-color: var(--theme-background);
+  border-top: 1px solid var(--theme-border);
+}
+
+/* App cards – consistent with theme */
+.theme-card {
+  background: var(--theme-surface);
+  border: 1px solid var(--theme-border);
+  border-radius: var(--theme-radius);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+.theme-card .card-header {
+  background: var(--theme-surface);
+  border-bottom: 1px solid var(--theme-border);
+  font-weight: 600;
+  color: var(--theme-text);
+}
+
 /* Utility */
 .form-label.required::after {
   content: " *";

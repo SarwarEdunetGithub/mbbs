@@ -57,7 +57,7 @@
                 <input type="checkbox" name="remember_me" id="id_remember_me" class="form-check-input"{% if form.remember_me.value != False %} checked{% endif %}>
                 <label class="form-check-label" for="id_remember_me">{{ form.remember_me.label }}</label>
               </div>
-              <a href="{% url 'accounts:forgot_password' %}" class="small text-primary text-decoration-none">Forgot password?</a>
+              <a href="{% url 'auth:forgot_password' %}" class="small text-primary text-decoration-none">Forgot password?</a>
             </div>
 
             {% if form.non_field_errors %}

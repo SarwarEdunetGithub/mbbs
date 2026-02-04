@@ -3,14 +3,14 @@
 {% block title %}Delete Student - Admin{% endblock %}
 
 {% block content %}
-<div class="container-fluid px-4">
+<div class="container-fluid px-4 py-3 py-md-4">
     <div class="row justify-content-center">
         <div class="col-md-7">
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-danger text-white">
-                    <h5 class="mb-0">
-                        <i class="bi bi-exclamation-triangle me-2"></i>Confirm Student Deletion
-                    </h5>
+            <div class="card theme-card">
+                <div class="card-header text-white" style="background: var(--theme-error); border-bottom: none;">
+                    <h2 class="h5 mb-0">
+                        <i class="bi bi-exclamation-triangle me-2" aria-hidden="true"></i>Confirm Student Deletion
+                    </h2>
                 </div>
                 <div class="card-body p-4">
                     <p class="mb-3">
@@ -23,13 +23,11 @@
                     </div>
                     <form method="post">
                         {% csrf_token %}
-                        <div class="d-flex gap-2">
+                        <div class="d-flex flex-wrap gap-2">
                             <button type="submit" name="confirm" value="1" class="btn btn-danger">
-                                <i class="bi bi-trash me-2"></i>Yes, Delete Student
+                                <i class="bi bi-trash me-2" aria-hidden="true"></i>Yes, Delete Student
                             </button>
-                            <button type="submit" name="cancel" value="1" class="btn btn-secondary">
-                                Cancel
-                            </button>
+                            <button type="submit" name="cancel" value="1" class="btn btn-secondary">Cancel</button>
                         </div>
                     </form>
                     <div class="small text-muted mt-3">

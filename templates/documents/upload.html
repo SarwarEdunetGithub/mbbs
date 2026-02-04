@@ -1,49 +1,66 @@
 {% extends 'base.html' %}
-{% load crispy_forms_tags %}
 
 {% block title %}Upload Document - MBBS Visa Management System{% endblock %}
 
 {% block content %}
-<div class="container-fluid px-4">
-    <div class="row">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <div>
-                    <h2>Upload Document</h2>
-                    <p class="text-muted">Upload required documents for visa processing</p>
-                </div>
-                <a href="{% url 'students:dashboard' %}" class="btn btn-outline-secondary">
-                    <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
-                </a>
+<div class="container-fluid px-4 py-3 py-md-4">
+    <header class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2 mb-4">
+        <div>
+            <h1 class="h2 mb-1">Upload Document</h1>
+            <p class="text-muted mb-0">Upload required documents for visa processing</p>
+        </div>
+        <a href="{% url 'students:dashboard' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-2" aria-hidden="true"></i>Back to Dashboard
+        </a>
+    </header>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="alert alert-info border-0 mb-4" style="background: var(--theme-primary-light); color: var(--theme-text);">
+                <strong><i class="bi bi-info-circle me-2" aria-hidden="true"></i>Required documents</strong>
+                <ul class="mb-0 mt-2 ps-3">
+                    <li>10th Marksheet</li>
+                    <li>12th Marksheet</li>
+                    <li>Aadhaar Card</li>
+                    <li>PAN Card</li>
+                    <li>Additional documents (if any)</li>
+                </ul>
+                <p class="mb-0 mt-2 small text-muted">Accepted: PDF, JPG, JPEG, PNG. Max size: 10MB</p>
             </div>
 
-            <div class="row justify-content-center">
-                <div class="col-md-8">
-                    <div class="card shadow-sm border-0">
-                        <div class="card-header bg-white border-bottom">
-                            <h5 class="mb-0">
-                                <i class="bi bi-cloud-upload me-2"></i>Document Upload Form
-                            </h5>
+            <div class="card form-card theme-card">
+                <div class="card-header">
+                    <h2 class="h5 mb-0">
+                        <i class="bi bi-cloud-upload me-2" aria-hidden="true"></i>Document Upload
+                    </h2>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post" enctype="multipart/form-data" data-validate>
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="id_document_type" class="form-label required">Document type</label>
+                            <select name="document_type" id="id_document_type" class="form-select form-control {% if form.document_type.errors %}is-invalid{% endif %}" required aria-describedby="id_document_type_help">
+                                {% for value, label in form.document_type.field.choices %}
+                                {% if value %}<option value="{{ value }}" {% if form.document_type.value == value %}selected{% endif %}>{{ label }}</option>{% endif %}
+                                {% endfor %}
+                            </select>
+                            <div id="id_document_type_help" class="form-text">Select the type of document you are uploading</div>
+                            {% if form.document_type.errors %}<div class="invalid-feedback">{{ form.document_type.errors.0 }}</div>{% endif %}
                         </div>
-                        <div class="card-body p-4">
-                            <div class="alert alert-info">
-                                <i class="bi bi-info-circle me-2"></i>
-                                <strong>Required Documents:</strong>
-                                <ul class="mb-0 mt-2">
-                                    <li>10th Marksheet</li>
-                                    <li>12th Marksheet</li>
-                                    <li>Aadhaar Card</li>
-                                    <li>PAN Card</li>
-                                    <li>Additional Documents (if any)</li>
-                                </ul>
-                                <p class="mb-0 mt-2">
-                                    <small>Accepted formats: PDF, JPG, JPEG, PNG (Max size: 10MB)</small>
-                                </p>
-                            </div>
-
-                            {% crispy form %}
+                        <div class="mb-3">
+                            <label for="id_file" class="form-label required">File</label>
+                            <input type="file" name="file" class="form-control {% if form.file.errors %}is-invalid{% endif %}" id="id_file" accept=".pdf,.jpg,.jpeg,.png" required aria-describedby="id_file_help">
+                            <div id="id_file_help" class="form-text">PDF, JPG, JPEG or PNG. Max 10MB</div>
+                            {% if form.file.errors %}<div class="invalid-feedback">{{ form.file.errors.0 }}</div>{% endif %}
                         </div>
-                    </div>
+                        <div class="mb-3">
+                            <label for="id_title" class="form-label">Title (optional)</label>
+                            <input type="text" name="title" class="form-control {% if form.title.errors %}is-invalid{% endif %}" id="id_title" value="{{ form.title.value|default:'' }}" placeholder="e.g. 10th Marksheet 2024" aria-describedby="id_title_help">
+                            <div id="id_title_help" class="form-text">Short description for your reference</div>
+                            {% if form.title.errors %}<div class="invalid-feedback">{{ form.title.errors.0 }}</div>{% endif %}
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-3">Upload Document</button>
+                    </form>
                 </div>
             </div>
         </div>

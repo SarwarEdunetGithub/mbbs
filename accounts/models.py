@@ -52,6 +52,12 @@ class User(AbstractUser):
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    # Temporary password (one-time, for forgot-password flow). When set, login forces password change.
+    temp_password_expires_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        help_text='If set, user has a temporary password valid until this time (one-time use).'
+    )
 
     objects = CustomUserManager()
     
@@ -91,3 +97,44 @@ class Notification(models.Model):
 
     def __str__(self) -> str:
         return f"Notification(to={self.user.username}, read={self.is_read})"
+
+
+class PasswordResetAuditLog(models.Model):
+    """
+    Audit log for forgot-password requests. Never store plaintext passwords.
+    """
+    RESULT_SENT = 'sent'
+    RESULT_RATE_LIMIT_USER = 'rate_limit_user'
+    RESULT_RATE_LIMIT_IP = 'rate_limit_ip'
+    RESULT_NO_MATCH = 'no_match'
+    RESULT_CHOICES = [
+        (RESULT_SENT, 'Sent'),
+        (RESULT_RATE_LIMIT_USER, 'Rate limit (per user)'),
+        (RESULT_RATE_LIMIT_IP, 'Rate limit (per IP)'),
+        (RESULT_NO_MATCH, 'No matching student'),
+    ]
+
+    user = models.ForeignKey(
+        'accounts.User',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='password_reset_audit_logs',
+        help_text='Null if no matching student (non-enumeration).'
+    )
+    requested_at = models.DateTimeField(auto_now_add=True)
+    email_attempted = models.BooleanField(default=False)
+    email_success = models.BooleanField(default=False)
+    sms_attempted = models.BooleanField(default=False)
+    sms_success = models.BooleanField(default=False)
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
+    user_agent = models.CharField(max_length=500, blank=True)
+    result = models.CharField(max_length=32, choices=RESULT_CHOICES)
+
+    class Meta:
+        ordering = ['-requested_at']
+        verbose_name = 'Password reset audit log'
+        verbose_name_plural = 'Password reset audit logs'
+
+    def __str__(self):
+        return f"Reset audit {self.requested_at} result={self.result}"

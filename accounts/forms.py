@@ -70,6 +70,81 @@ class ChangePasswordForm(forms.Form):
         return cleaned
 
 
+class ForgotPasswordForm(forms.Form):
+    """Forgot password: at least one of email or phone required (non-enumeration)."""
+    email = forms.EmailField(
+        required=False,
+        label='Email',
+        widget=forms.EmailInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Enter your registered email',
+            'autocomplete': 'email',
+        }),
+    )
+    phone = forms.CharField(
+        required=False,
+        max_length=15,
+        label='Phone number',
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Enter your registered phone',
+            'autocomplete': 'tel',
+        }),
+    )
+
+    def clean(self):
+        cleaned = super().clean()
+        email = (cleaned.get('email') or '').strip()
+        phone = (cleaned.get('phone') or '').strip()
+        if not email and not phone:
+            raise forms.ValidationError('Please enter your email or phone number (or both).')
+        cleaned['email'] = email or None
+        cleaned['phone'] = phone or None
+        return cleaned
+
+
+class ForceChangePasswordForm(forms.Form):
+    """Mandatory password change after temp-password login (no current password)."""
+    new_password = forms.CharField(
+        label='New password',
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Choose a new password',
+            'autocomplete': 'new-password',
+        }),
+        required=True,
+        help_text='At least 8 characters; avoid common or purely numeric passwords.',
+    )
+    new_password_confirm = forms.CharField(
+        label='Confirm new password',
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Re-enter new password',
+            'autocomplete': 'new-password',
+        }),
+        required=True,
+        help_text='Must match the new password above.',
+    )
+
+    def __init__(self, user, *args, **kwargs):
+        self.user = user
+        super().__init__(*args, **kwargs)
+
+    def clean_new_password(self):
+        value = self.cleaned_data.get('new_password')
+        if value:
+            validate_password(value, self.user)
+        return value
+
+    def clean(self):
+        cleaned = super().clean()
+        new = cleaned.get('new_password')
+        confirm = cleaned.get('new_password_confirm')
+        if new and confirm and new != confirm:
+            self.add_error('new_password_confirm', 'The two password fields did not match.')
+        return cleaned
+
+
 class StudentRegistrationForm(forms.ModelForm):
     """
     Student Registration Form
