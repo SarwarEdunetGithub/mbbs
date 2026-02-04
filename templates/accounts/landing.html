@@ -1,142 +1,141 @@
-{% extends "./accountbase.html" %}
+{% extends "accounts/accountbase.html" %}
 {% load static %}
-{% block content  %}    <!-- Hero Section -->
-    <section class="hero" id="home">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-lg-7 hero-content">
-                    <p class="text-uppercase fw-bold mb-2" style="letter-spacing: 5px; opacity: 0.9;">aspire abroad with us</p>
-                    <h1 class="mb-4">Your Gateway to MBBS in Russian Universities</h1>
-                    <p class="lead mb-4"><b>AspireAbroad</b> is your trusted partner in pursuing medical education in Russia. As the official representative of Far Eastern Federal University (FEFU), we hold the power of attorney to guide students with complete transparency and integrity. Unlike other agencies, we charge no hidden fees, miscellaneous costs, or one-time charges—our commitment is to honesty and clarity. We specialize in helping aspiring doctors secure admission to MBBS programs at leading Russian universities, ensuring a smooth and reliable process. With Aspire Abroad, you gain a transparent pathway to success, backed by official representation and a dedication to your future in medicine 
-                        Register now and start your journey.</p>
-                    <a href="{% url 'accounts:register' %}" class="btn btn-light btn-lg px-4 py-3 fw-semibold me-3">
-                        <i class="bi bi-person-plus me-2"></i>Get Started
-                    </a>
-                    <a href="{% url 'accounts:login' %}" class="btn btn-outline-light btn-lg px-4 py-3 fw-semibold">
-                        <i class="bi bi-box-arrow-in-right me-2"></i>Login
-                    </a>
-                </div>
-                <div class="col-lg-5 text-center d-none d-lg-block">
-                    <img style="  border-radius: 60%; width: 90%;" src="{% static 'images/logo.jpeg' %}" alt="AspireAbroad" style="max-width: 110%">
-                </div>
-            </div>
-        </div>
-    </section>
 
-    <!-- About Section -->
-    <section class="py-5" id="about">
-        <div class="container py-5">
-            <div class="text-center mb-5">
-                <h2 class="section-title">About Us</h2>
-                <h3 class="section-subtitle">Official Representative of FEFU</h3>
-                <p class="section-subtitle mx-auto" style="max-width: 600px;">Welcome to <B>Aspire Abroad</B>, Official representative of FEFU, we hold power of attorney from FEFU . Our agency doesn’t have any hidden charges, miscellaneous charges, one time charges etc. We are your trusted partner in pursuing a medical education in Russia. As an official representative of leading universities, we specialize in guiding students through the admission process for MBBS programs. Our commitment to transparency and integrity sets us apart in the industry.</p>
-            </div>
-            <div class="row g-4">
-                <div class="col-md-4">
-                    <div class="card card-feature h-100 p-4">
-                        <div class="icon-box mb-3"><i class="bi bi-shield-check"></i></div>
-                        <h5>Secure & Reliable</h5>
-                        <p class="text-muted mb-0">Your documents and data are protected with industry-standard security.</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card card-feature h-100 p-4">
-                        <div class="icon-box mb-3"><i class="bi bi-speedometer2"></i></div>
-                        <h5>Easy Tracking</h5>
-                        <p class="text-muted mb-0">Track your visa status in real-time from registration to approval.</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card card-feature h-100 p-4">
-                        <div class="icon-box mb-3"><i class="bi bi-headset"></i></div>
-                        <h5>Admin Support</h5>
-                        <p class="text-muted mb-0">Dedicated admin support for document verification and status updates.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+{% block title %}Aspire Abroad – MBBS Visa{% endblock %}
 
-    <!-- Services Section -->
-    <section class="py-5 bg-light" id="services">
-        <div class="container py-5">
-            <div class="text-center mb-5">
-                <h2 class="section-title">Our Services</h2>
-                <p class="section-subtitle mx-auto" style="max-width: 600px;">Comprehensive support for your MBBS visa application process.</p>
-            </div>
-            <div class="row g-4">
-                <div class="col-md-6 col-lg-3">
-                    <div class="card card-feature h-100 p-4 text-center">
-                        <i class="bi bi-person-plus-fill text-primary mb-3" style="font-size: 2.5rem;"></i>
-                        <h6>Student Registration</h6>
-                        <p class="small text-muted mb-0">Complete visa-required details and secure account creation.</p>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-3">
-                    <div class="card card-feature h-100 p-4 text-center">
-                        <i class="bi bi-file-earmark-arrow-up text-primary mb-3" style="font-size: 2.5rem;"></i>
-                        <h6>Document Upload</h6>
-                        <p class="small text-muted mb-0">Upload marksheets, Aadhaar, PAN and additional documents.</p>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-3">
-                    <div class="card card-feature h-100 p-4 text-center">
-                        <i class="bi bi-eye text-primary mb-3" style="font-size: 2.5rem;"></i>
-                        <h6>Document Preview</h6>
-                        <p class="small text-muted mb-0">View documents before download. Admin verification support.</p>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-3">
-                    <div class="card card-feature h-100 p-4 text-center">
-                        <i class="bi bi-graph-up-arrow text-primary mb-3" style="font-size: 2.5rem;"></i>
-                        <h6>Status Tracking</h6>
-                        <p class="small text-muted mb-0">From Registered to Approved. Real-time visa status updates.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Why Choose Us -->
-    <section class="py-5" id="why-us">
-        <div class="container py-5">
-            <div class="text-center mb-5">
-                <h2 class="section-title">Why Choose Aspire Abroad</h2>
-            </div>
-            <div class="row g-4 justify-content-center">
-                <div class="col-md-6 col-lg-4">
-                    <div class="d-flex align-items-start">
-                        <i class="bi bi-check-circle-fill text-success me-3 mt-1" style="font-size: 1.5rem;"></i>
-                        <div><h6>Transparent Process</h6><p class="text-muted small mb-0">Clear visibility at every step of your application.</p></div>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-4">
-                    <div class="d-flex align-items-start">
-                        <i class="bi bi-check-circle-fill text-success me-3 mt-1" style="font-size: 1.5rem;"></i>
-                        <div><h6>Fast Processing</h6><p class="text-muted small mb-0">Efficient document handling and quick status updates.</p></div>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-4">
-                    <div class="d-flex align-items-start">
-                        <i class="bi bi-check-circle-fill text-success me-3 mt-1" style="font-size: 1.5rem;"></i>
-                        <div><h6>Professional Support</h6><p class="text-muted small mb-0">Dedicated admin team for student assistance.</p></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- CTA Section -->
-    <section class="cta-section">
-        <div class="container text-center">
-            <h2 class="mb-3 fw-bold">Ready to Start Your MBBS Journey?</h2>
-            <p class="mb-4 opacity-90">Register now and submit your documents for visa processing.</p>
-            <a href="{% url 'accounts:register' %}" class="btn btn-light btn-lg px-5 py-3 fw-semibold me-2">
-                <i class="bi bi-person-plus me-2"></i>Sign Up
+{% block content %}
+  <section class="hero-accounts" id="home" aria-labelledby="hero-heading">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-7">
+          <p class="text-uppercase fw-semibold mb-2 opacity-90" style="letter-spacing: 0.15em;">Aspire abroad with us</p>
+          <h1 id="hero-heading" class="display-5 fw-bold mb-3">Your gateway to MBBS in Russia</h1>
+          <p class="lead mb-4">
+            Aspire Abroad is the official representative of Far Eastern Federal University (FEFU). We guide you through admission and visa with full transparency—no hidden fees, no extra charges.
+          </p>
+          <div class="d-flex flex-wrap gap-2 gap-md-3">
+            <a href="{% url 'accounts:register' %}" class="btn btn-light btn-lg px-4 py-3 fw-semibold">
+              <i class="bi bi-person-plus me-2" aria-hidden="true"></i>Get started
             </a>
-            <a href="{% url 'accounts:login' %}" class="btn btn-outline-light btn-lg px-5 py-3 fw-semibold">
-                <i class="bi bi-box-arrow-in-right me-2"></i>Login
+            <a href="{% url 'accounts:login' %}" class="btn btn-outline-light btn-lg px-4 py-3 fw-semibold">
+              <i class="bi bi-box-arrow-in-right me-2" aria-hidden="true"></i>Login
             </a>
+          </div>
         </div>
-    </section>
-{% endblock  %}
+        <div class="col-lg-5 text-center d-none d-lg-block mt-4 mt-lg-0">
+          <img src="{% static 'images/logo.jpeg' %}" alt="" width="280" height="280" class="rounded-circle object-fit-cover">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-5" id="features" aria-labelledby="features-heading">
+    <div class="container py-4">
+      <h2 id="features-heading" class="text-center fw-bold mb-2">How it works</h2>
+      <p class="text-center text-muted mx-auto mb-4" style="max-width: 36rem;">Register once, upload documents, and track your visa status in one place.</p>
+      <div class="row g-4">
+        <div class="col-md-6 col-lg-3">
+          <article class="feature-card">
+            <div class="feature-icon mb-3"><i class="bi bi-person-plus-fill" aria-hidden="true"></i></div>
+            <h3 class="h6 fw-semibold mb-2">Register</h3>
+            <p class="small text-muted mb-0">Create your account with basic details. Quick and secure.</p>
+          </article>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <article class="feature-card">
+            <div class="feature-icon mb-3"><i class="bi bi-file-earmark-arrow-up" aria-hidden="true"></i></div>
+            <h3 class="h6 fw-semibold mb-2">Upload documents</h3>
+            <p class="small text-muted mb-0">Marksheets, Aadhaar, PAN and other required documents.</p>
+          </article>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <article class="feature-card">
+            <div class="feature-icon mb-3"><i class="bi bi-shield-check" aria-hidden="true"></i></div>
+            <h3 class="h6 fw-semibold mb-2">Verification</h3>
+            <p class="small text-muted mb-0">Our team verifies your documents and updates status.</p>
+          </article>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <article class="feature-card">
+            <div class="feature-icon mb-3"><i class="bi bi-graph-up-arrow" aria-hidden="true"></i></div>
+            <h3 class="h6 fw-semibold mb-2">Track status</h3>
+            <p class="small text-muted mb-0">From registered to approved—see progress anytime.</p>
+          </article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-5 bg-light" id="about" aria-labelledby="about-heading">
+    <div class="container py-4">
+      <h2 id="about-heading" class="text-center fw-bold mb-2">Why Aspire Abroad</h2>
+      <p class="text-center text-muted mx-auto mb-4" style="max-width: 36rem;">Official FEFU representative with power of attorney. We focus on clarity and support.</p>
+      <div class="row g-4 justify-content-center">
+        <div class="col-md-6 col-lg-4">
+          <div class="d-flex align-items-start gap-3">
+            <i class="bi bi-check-circle-fill text-success flex-shrink-0 mt-1" style="font-size: 1.25rem;" aria-hidden="true"></i>
+            <div>
+              <h3 class="h6 fw-semibold mb-1">Transparent process</h3>
+              <p class="small text-muted mb-0">No hidden or miscellaneous charges. What you see is what you pay.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="d-flex align-items-start gap-3">
+            <i class="bi bi-check-circle-fill text-success flex-shrink-0 mt-1" style="font-size: 1.25rem;" aria-hidden="true"></i>
+            <div>
+              <h3 class="h6 fw-semibold mb-1">Official partner</h3>
+              <p class="small text-muted mb-0">Authorised FEFU representative with power of attorney.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="d-flex align-items-start gap-3">
+            <i class="bi bi-check-circle-fill text-success flex-shrink-0 mt-1" style="font-size: 1.25rem;" aria-hidden="true"></i>
+            <div>
+              <h3 class="h6 fw-semibold mb-1">Dedicated support</h3>
+              <p class="small text-muted mb-0">Admin team for document checks and status updates.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-5" aria-labelledby="proof-heading">
+    <div class="container py-4">
+      <h2 id="proof-heading" class="text-center fw-bold mb-4">Trusted by students</h2>
+      <div class="row g-4 text-center">
+        <div class="col-6 col-md-3">
+          <p class="proof-value mb-1">FEFU</p>
+          <p class="small text-muted mb-0">Official partner</p>
+        </div>
+        <div class="col-6 col-md-3">
+          <p class="proof-value mb-1">0</p>
+          <p class="small text-muted mb-0">Hidden fees</p>
+        </div>
+        <div class="col-6 col-md-3">
+          <p class="proof-value mb-1">Secure</p>
+          <p class="small text-muted mb-0">Document handling</p>
+        </div>
+        <div class="col-6 col-md-3">
+          <p class="proof-value mb-1">24/7</p>
+          <p class="small text-muted mb-0">Status tracking</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-banner" aria-labelledby="cta-heading">
+    <div class="container text-center">
+      <h2 id="cta-heading" class="h4 fw-bold mb-2">Ready to start your MBBS journey?</h2>
+      <p class="mb-4 opacity-90">Register now and submit your documents for visa processing.</p>
+      <a href="{% url 'accounts:register' %}" class="btn btn-light btn-lg px-4 py-3 fw-semibold me-2">
+        <i class="bi bi-person-plus me-2" aria-hidden="true"></i>Sign up
+      </a>
+      <a href="{% url 'accounts:login' %}" class="btn btn-outline-light btn-lg px-4 py-3 fw-semibold">
+        <i class="bi bi-box-arrow-in-right me-2" aria-hidden="true"></i>Login
+      </a>
+    </div>
+  </section>
+{% endblock %}

@@ -68,8 +68,8 @@ class User(AbstractUser):
         return self.role == 'STUDENT'
     
     def is_admin(self):
-        """Check if user is an admin"""
-        return self.role == 'ADMIN'
+        """Check if user is an admin (role=ADMIN or staff/superuser for Django admin access)."""
+        return self.role == 'ADMIN' or self.is_staff or self.is_superuser
 
 
 class Notification(models.Model):

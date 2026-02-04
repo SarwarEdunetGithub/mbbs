@@ -132,20 +132,26 @@ def document_download(request, document_id):
         messages.error(request, 'You do not have permission to access this document.')
         return redirect('students:dashboard')
     
-    # Check if file exists
-    if document.file and os.path.exists(document.file.path):
-        try:
+    # Serve file (works with default FileSystemStorage and other backends)
+    if not document.file:
+        messages.error(request, 'File not found.')
+        return redirect('students:dashboard')
+    try:
+        file_path = getattr(document.file, 'path', None)
+        if file_path and os.path.exists(file_path):
             response = FileResponse(
-                open(document.file.path, 'rb'),
+                open(file_path, 'rb'),
                 content_type='application/octet-stream'
             )
-            response['Content-Disposition'] = f'attachment; filename="{document.filename()}"'
-            return response
-        except Exception as e:
-            messages.error(request, f'Error downloading file: {str(e)}')
-            return redirect('students:dashboard')
-    else:
-        messages.error(request, 'File not found.')
+        else:
+            response = FileResponse(
+                document.file.open('rb'),
+                content_type='application/octet-stream'
+            )
+        response['Content-Disposition'] = f'attachment; filename="{document.filename()}"'
+        return response
+    except Exception as e:
+        messages.error(request, f'Error downloading file: {str(e)}')
         return redirect('students:dashboard')
 
 

@@ -3,9 +3,71 @@ Forms for Authentication
 """
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.password_validation import validate_password
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Row, Column, Submit, HTML
 from .models import User
+
+
+class ChangePasswordForm(forms.Form):
+    """
+    Secure change-password form: current password, new password, confirm.
+    Requires the requesting user to be passed in to verify current password.
+    Runs Django's AUTH_PASSWORD_VALIDATORS on the new password.
+    """
+    current_password = forms.CharField(
+        label='Current password',
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Enter your current password',
+            'autocomplete': 'current-password',
+        }),
+        required=True,
+    )
+    new_password = forms.CharField(
+        label='New password',
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Enter new password',
+            'autocomplete': 'new-password',
+        }),
+        required=True,
+        help_text='At least 8 characters; avoid common or purely numeric passwords.',
+    )
+    new_password_confirm = forms.CharField(
+        label='Confirm new password',
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Re-enter new password',
+            'autocomplete': 'new-password',
+        }),
+        required=True,
+        help_text='Must match the new password above.',
+    )
+
+    def __init__(self, user, *args, **kwargs):
+        self.user = user
+        super().__init__(*args, **kwargs)
+
+    def clean_current_password(self):
+        value = self.cleaned_data.get('current_password')
+        if value and not self.user.check_password(value):
+            raise forms.ValidationError('The current password is incorrect.')
+        return value
+
+    def clean_new_password(self):
+        value = self.cleaned_data.get('new_password')
+        if value:
+            validate_password(value, self.user)
+        return value
+
+    def clean(self):
+        cleaned = super().clean()
+        new = cleaned.get('new_password')
+        confirm = cleaned.get('new_password_confirm')
+        if new and confirm and new != confirm:
+            self.add_error('new_password_confirm', 'The two new password fields did not match.')
+        return cleaned
 
 
 class StudentRegistrationForm(forms.ModelForm):
@@ -84,21 +146,29 @@ class StudentRegistrationForm(forms.ModelForm):
 
 class LoginForm(forms.Form):
     """
-    Login Form with Crispy Forms styling
+    Login Form – used with manual template markup for labels, helper text, password toggle.
     """
     username = forms.CharField(
         max_length=150,
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Username'})
+        label='Username',
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Enter your username',
+            'autocomplete': 'username',
+            'autocapitalize': 'none',
+        })
     )
     password = forms.CharField(
-        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Password'})
+        label='Password',
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Enter your password',
+            'autocomplete': 'current-password',
+        })
     )
-    
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.layout = Layout(
-            'username',
-            'password',
-            Submit('submit', 'Login', css_class='btn btn-primary w-100 mt-3')
-        )
+    remember_me = forms.BooleanField(
+        required=False,
+        initial=True,
+        label='Remember me',
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
+    )

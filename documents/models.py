@@ -67,6 +67,8 @@ class Document(models.Model):
     
     def filename(self):
         """Get filename from file path"""
+        if not self.file or not self.file.name:
+            return ''
         return os.path.basename(self.file.name)
     
     def file_size(self):

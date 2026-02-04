@@ -1,32 +1,129 @@
-{% extends './accountbase.html' %}
-{% load crispy_forms_tags %}
+{% extends "accounts/accountbase.html" %}
 
-{% block title %}Student Registration - MBBS Visa Management System{% endblock %}
+{% block title %}Sign up{% endblock %}
 
 {% block content %}
-<div class="container py-5">
+<div class="form-page">
+  <div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-7">
-            <div class="card shadow-lg border-0">
-                <div class="card-body p-5">
-                    <div class="text-center mb-4">
-                        <i class="bi bi-person-plus-fill text-primary" style="font-size: 3rem;"></i>
-                        <h2 class="mt-3 mb-1">Register Here</h2>
-                        <p class="text-muted">Create a new account to access!</p>
-                        <hr class="my-4">
-                        <p class="text-muted">Please fill in all required information for visa processing</p>
-                    </div>
+      <div class="col-lg-8">
+        <div class="form-card p-4 p-md-5">
+          <div class="text-center mb-4">
+            <i class="bi bi-person-plus-fill text-primary" style="font-size: 2.5rem;" aria-hidden="true"></i>
+            <h1 class="h3 fw-bold mt-3 mb-1">Create your account</h1>
+            <p class="text-muted small mb-0">Fill in your details for visa processing. All fields are required unless marked optional.</p>
+          </div>
 
-                    {% crispy form %}
+          <form method="post" action="{% url 'accounts:register' %}" novalidate data-validate>
+            {% csrf_token %}
 
-                    <div class="text-center mt-4">
-                        <p class="mb-0">Already have an account? 
-                            <a href="{% url 'accounts:login' %}" class="text-decoration-none">Login here</a>
-                        </p>
-                    </div>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label for="id_username" class="form-label required">{{ form.username.label }}</label>
+                <input type="text" name="username" id="id_username" value="{{ form.username.value|default:'' }}"
+                       class="form-control {% if form.username.errors %}is-invalid{% endif %}"
+                       placeholder="Choose a username" autocomplete="username" autocapitalize="none" required
+                       aria-describedby="username-help {% if form.username.errors %}id_username_error{% endif %}"
+                       aria-invalid="{% if form.username.errors %}true{% else %}false{% endif %}">
+                <div id="username-help" class="form-text">Unique; used to sign in. Letters, digits, and @/./+/-/_ only.</div>
+                {% if form.username.errors %}
+                <div id="id_username_error" class="invalid-feedback" role="alert">{{ form.username.errors.0 }}</div>
+                {% endif %}
+              </div>
+              <div class="col-md-6">
+                <label for="id_email" class="form-label required">{{ form.email.label }}</label>
+                <input type="email" name="email" id="id_email" value="{{ form.email.value|default:'' }}"
+                       class="form-control {% if form.email.errors %}is-invalid{% endif %}"
+                       placeholder="you@example.com" autocomplete="email" required
+                       aria-describedby="email-help {% if form.email.errors %}id_email_error{% endif %}"
+                       aria-invalid="{% if form.email.errors %}true{% else %}false{% endif %}">
+                <div id="email-help" class="form-text">We’ll use this for important updates.</div>
+                {% if form.email.errors %}
+                <div id="id_email_error" class="invalid-feedback" role="alert">{{ form.email.errors.0 }}</div>
+                {% endif %}
+              </div>
+              <div class="col-md-6">
+                <label for="id_first_name" class="form-label required">{{ form.first_name.label }}</label>
+                <input type="text" name="first_name" id="id_first_name" value="{{ form.first_name.value|default:'' }}"
+                       class="form-control {% if form.first_name.errors %}is-invalid{% endif %}"
+                       placeholder="First name" autocomplete="given-name" required
+                       aria-invalid="{% if form.first_name.errors %}true{% else %}false{% endif %}">
+                {% if form.first_name.errors %}
+                <div class="invalid-feedback" role="alert">{{ form.first_name.errors.0 }}</div>
+                {% endif %}
+              </div>
+              <div class="col-md-6">
+                <label for="id_last_name" class="form-label required">{{ form.last_name.label }}</label>
+                <input type="text" name="last_name" id="id_last_name" value="{{ form.last_name.value|default:'' }}"
+                       class="form-control {% if form.last_name.errors %}is-invalid{% endif %}"
+                       placeholder="Last name" autocomplete="family-name" required
+                       aria-invalid="{% if form.last_name.errors %}true{% else %}false{% endif %}">
+                {% if form.last_name.errors %}
+                <div class="invalid-feedback" role="alert">{{ form.last_name.errors.0 }}</div>
+                {% endif %}
+              </div>
+              <div class="col-12">
+                <label for="id_phone_number" class="form-label">{{ form.phone_number.label }}</label>
+                <input type="tel" name="phone_number" id="id_phone_number" value="{{ form.phone_number.value|default:'' }}"
+                       class="form-control {% if form.phone_number.errors %}is-invalid{% endif %}"
+                       placeholder="Optional" autocomplete="tel"
+                       aria-invalid="{% if form.phone_number.errors %}true{% else %}false{% endif %}">
+                <div class="form-text">Optional. Include country code if needed.</div>
+                {% if form.phone_number.errors %}
+                <div class="invalid-feedback" role="alert">{{ form.phone_number.errors.0 }}</div>
+                {% endif %}
+              </div>
+              <div class="col-md-6">
+                <label for="id_password" class="form-label required">{{ form.password.label }}</label>
+                <div class="password-toggle-wrapper">
+                  <input type="password" name="password" id="id_password"
+                         class="form-control {% if form.password.errors %}is-invalid{% endif %}"
+                         placeholder="At least 8 characters" autocomplete="new-password" required minlength="8"
+                         aria-describedby="password-help {% if form.password.errors %}id_password_error{% endif %}"
+                         aria-invalid="{% if form.password.errors %}true{% else %}false{% endif %}">
+                  <button type="button" class="btn btn-password-toggle" data-password-toggle aria-label="Show password">
+                    <i class="bi bi-eye-slash" aria-hidden="true"></i>
+                  </button>
                 </div>
+                <div id="password-help" class="form-text">{{ form.password.help_text }}</div>
+                {% if form.password.errors %}
+                <div id="id_password_error" class="invalid-feedback" role="alert">{{ form.password.errors.0 }}</div>
+                {% endif %}
+              </div>
+              <div class="col-md-6">
+                <label for="id_password_confirm" class="form-label required">{{ form.password_confirm.label }}</label>
+                <div class="password-toggle-wrapper">
+                  <input type="password" name="password_confirm" id="id_password_confirm"
+                         class="form-control {% if form.password_confirm.errors %}is-invalid{% endif %}"
+                         placeholder="Same as above" autocomplete="new-password" required minlength="8"
+                         aria-describedby="password_confirm-help {% if form.password_confirm.errors %}id_password_confirm_error{% endif %}"
+                         aria-invalid="{% if form.password_confirm.errors %}true{% else %}false{% endif %}">
+                  <button type="button" class="btn btn-password-toggle" data-password-toggle aria-label="Show password">
+                    <i class="bi bi-eye-slash" aria-hidden="true"></i>
+                  </button>
+                </div>
+                <div id="password_confirm-help" class="form-text">{{ form.password_confirm.help_text }}</div>
+                {% if form.password_confirm.errors %}
+                <div id="id_password_confirm_error" class="invalid-feedback" role="alert">{{ form.password_confirm.errors.0 }}</div>
+                {% endif %}
+              </div>
             </div>
+
+            {% if form.non_field_errors %}
+            <div class="alert alert-danger small mt-3" role="alert">
+              {% for err in form.non_field_errors %}{{ err }}{% endfor %}
+            </div>
+            {% endif %}
+
+            <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold mt-4">Create account</button>
+          </form>
+
+          <p class="text-center text-muted small mt-4 mb-0">
+            Already have an account? <a href="{% url 'accounts:login' %}" class="text-primary text-decoration-none fw-medium">Login</a>
+          </p>
         </div>
+      </div>
     </div>
+  </div>
 </div>
 {% endblock %}
