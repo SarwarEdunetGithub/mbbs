@@ -71,36 +71,22 @@ class ChangePasswordForm(forms.Form):
 
 
 class ForgotPasswordForm(forms.Form):
-    """Forgot password: at least one of email or phone required (non-enumeration)."""
-    email = forms.EmailField(
-        required=False,
-        label='Email',
-        widget=forms.EmailInput(attrs={
-            'class': 'form-control',
-            'placeholder': 'Enter your registered email',
-            'autocomplete': 'email',
-        }),
-    )
-    phone = forms.CharField(
-        required=False,
-        max_length=15,
-        label='Phone number',
+    """
+    Forgot password: username or email required.
+    """
+    username_or_email = forms.CharField(
+        label='Username or Email',
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': 'Enter your registered phone',
-            'autocomplete': 'tel',
+            'placeholder': 'Enter your username or email',
+            'autocomplete': 'username',
         }),
+        required=True
     )
 
-    def clean(self):
-        cleaned = super().clean()
-        email = (cleaned.get('email') or '').strip()
-        phone = (cleaned.get('phone') or '').strip()
-        if not email and not phone:
-            raise forms.ValidationError('Please enter your email or phone number (or both).')
-        cleaned['email'] = email or None
-        cleaned['phone'] = phone or None
-        return cleaned
+    def clean_username_or_email(self):
+        data = self.cleaned_data['username_or_email'].strip()
+        return data
 
 
 class ForceChangePasswordForm(forms.Form):

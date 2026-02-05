@@ -173,3 +173,13 @@ PASSWORD_RESET_MAX_PER_USER_PER_DAY = int(config('PASSWORD_RESET_MAX_PER_USER_PE
 PASSWORD_RESET_MAX_PER_IP_PER_HOUR = int(config('PASSWORD_RESET_MAX_PER_IP_PER_HOUR', default=10))
 SEND_EMAIL_ENABLED = config('SEND_EMAIL_ENABLED', default=True, cast=bool)
 SEND_SMS_ENABLED = config('SEND_SMS_ENABLED', default=False, cast=bool)
+
+# Email Settings
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = config('EMAIL_HOST', default='smtp.gmail.com')
+EMAIL_PORT = config('EMAIL_PORT', default=587, cast=int)
+EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
+EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
+DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default=EMAIL_HOST_USER)
+

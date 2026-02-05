@@ -32,15 +32,31 @@
               </div>
               <div class="col-md-6">
                 <label for="id_email" class="form-label required">{{ form.email.label }}</label>
-                <input type="email" name="email" id="id_email" value="{{ form.email.value|default:'' }}"
-                       class="form-control {% if form.email.errors %}is-invalid{% endif %}"
-                       placeholder="you@example.com" autocomplete="email" required
-                       aria-describedby="email-help {% if form.email.errors %}id_email_error{% endif %}"
-                       aria-invalid="{% if form.email.errors %}true{% else %}false{% endif %}">
+                <div class="input-group">
+                  <input type="email" name="email" id="id_email" value="{{ form.email.value|default:'' }}"
+                         class="form-control {% if form.email.errors %}is-invalid{% endif %}"
+                         placeholder="you@example.com" autocomplete="email" required
+                         aria-describedby="email-help {% if form.email.errors %}id_email_error{% endif %}"
+                         aria-invalid="{% if form.email.errors %}true{% else %}false{% endif %}">
+                  <button type="button" class="btn btn-outline-primary" id="btn-verify-email">Verify</button>
+                  <button type="button" class="btn btn-success d-none" id="btn-email-verified" disabled>
+                    <i class="bi bi-check-circle-fill"></i> Verified
+                  </button>
+                </div>
                 <div id="email-help" class="form-text">We’ll use this for important updates.</div>
                 {% if form.email.errors %}
                 <div id="id_email_error" class="invalid-feedback" role="alert">{{ form.email.errors.0 }}</div>
                 {% endif %}
+                
+                <!-- OTP Section -->
+                <div id="otp-section" class="mt-2 d-none">
+                    <label for="otp-input" class="form-label small text-muted">Enter verification code sent to your email</label>
+                    <div class="input-group input-group-sm">
+                        <input type="text" id="otp-input" class="form-control" placeholder="6-digit OTP" maxlength="6">
+                        <button type="button" class="btn btn-primary" id="btn-submit-otp">Submit OTP</button>
+                    </div>
+                    <div id="otp-message" class="form-text small mt-1"></div>
+                </div>
               </div>
               <div class="col-md-6">
                 <label for="id_first_name" class="form-label required">{{ form.first_name.label }}</label>
@@ -115,7 +131,7 @@
             </div>
             {% endif %}
 
-            <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold mt-4">Create account</button>
+            <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold mt-4" id="btn-submit-register" disabled>Create account</button>
           </form>
 
           <p class="text-center text-muted small mt-4 mb-0">
@@ -126,4 +142,110 @@
     </div>
   </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const emailInput = document.getElementById('id_email');
+    const verifyBtn = document.getElementById('btn-verify-email');
+    const verifiedBadge = document.getElementById('btn-email-verified');
+    const otpSection = document.getElementById('otp-section');
+    const otpInput = document.getElementById('otp-input');
+    const submitOtpBtn = document.getElementById('btn-submit-otp');
+    const otpMessage = document.getElementById('otp-message');
+    const registerBtn = document.getElementById('btn-submit-register');
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    function showMessage(element, message, type) {
+        element.textContent = message;
+        element.className = 'form-text small mt-1 ' + (type === 'error' ? 'text-danger' : 'text-success');
+    }
+
+    verifyBtn.addEventListener('click', function() {
+        const email = emailInput.value.trim();
+        if (!email) {
+            alert('Please enter an email address first.');
+            return;
+        }
+
+        // Disable button to prevent double clicks
+        verifyBtn.disabled = true;
+        verifyBtn.textContent = 'Sending...';
+        otpMessage.textContent = '';
+
+        fetch('{% url "accounts:send_otp" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({email: email})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                otpSection.classList.remove('d-none');
+                verifyBtn.textContent = 'Resend OTP';
+                verifyBtn.disabled = false;
+                showMessage(otpMessage, 'OTP sent to ' + email, 'success');
+                otpInput.focus();
+            } else {
+                verifyBtn.textContent = 'Verify';
+                verifyBtn.disabled = false;
+                alert(data.message || 'Failed to send OTP.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            verifyBtn.textContent = 'Verify';
+            verifyBtn.disabled = false;
+            alert('An error occurred. Please try again.');
+        });
+    });
+
+    submitOtpBtn.addEventListener('click', function() {
+        const otp = otpInput.value.trim();
+        const email = emailInput.value.trim();
+        
+        if (!otp) {
+            showMessage(otpMessage, 'Please enter the OTP.', 'error');
+            return;
+        }
+
+        submitOtpBtn.disabled = true;
+        submitOtpBtn.textContent = 'Verifying...';
+
+        fetch('{% url "accounts:verify_otp" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({email: email, otp: otp})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Success: Hide OTP section, show verified badge, lock email, enable register
+                otpSection.classList.add('d-none');
+                verifyBtn.classList.add('d-none');
+                verifiedBadge.classList.remove('d-none');
+                emailInput.readOnly = true;
+                registerBtn.disabled = false;
+                showMessage(otpMessage, 'Verified!', 'success'); // Might be hidden
+            } else {
+                submitOtpBtn.disabled = false;
+                submitOtpBtn.textContent = 'Submit OTP';
+                showMessage(otpMessage, data.message || 'Invalid OTP.', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            submitOtpBtn.disabled = false;
+            submitOtpBtn.textContent = 'Submit OTP';
+            showMessage(otpMessage, 'An error occurred.', 'error');
+        });
+    });
+});
+</script>
 {% endblock %}
+

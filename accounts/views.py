@@ -7,6 +7,9 @@ import string
 import time
 from datetime import timedelta
 from django.shortcuts import render, redirect
+from django.db.models import Q
+from django.http import JsonResponse
+import json
 from django.contrib.auth import login, authenticate, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -33,8 +36,13 @@ PASSWORD_CHANGE_RATE_LIMIT_SECONDS = 900  # 15 minutes
 FORGOT_PASSWORD_RESPONSE_DELAY = 0.5
 
 
-def _generate_temporary_password(length=14):
-    """Strong random password: mixed classes, 12+ chars. Never log this."""
+def _generate_otp(length=6):
+    """Generate a 6-digit OTP."""
+    return ''.join(secrets.choice(string.digits) for _ in range(length))
+
+
+def _generate_temporary_password(length=8):
+    """Strong random password: mixed classes. Never log this."""
     alphabet = string.ascii_letters + string.digits + string.punctuation
     # Ensure at least one of each class
     pwd = [
@@ -70,6 +78,82 @@ def landing_page(request):
     return render(request, 'accounts/landing.html')
 
 
+def send_otp_view(request):
+    """
+    Send OTP to the provided email address.
+    Expects JSON payload: {"email": "user@example.com"}
+    """
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'message': 'Invalid request method.'}, status=405)
+
+    try:
+        data = json.loads(request.body)
+        email = data.get('email', '').strip()
+    except json.JSONDecodeError:
+        return JsonResponse({'success': False, 'message': 'Invalid JSON.'}, status=400)
+
+    if not email:
+        return JsonResponse({'success': False, 'message': 'Email is required.'}, status=400)
+
+    # Check if user already exists
+    if User.objects.filter(email=email).exists():
+        return JsonResponse({'success': False, 'message': 'An account with this email already exists.'}, status=400)
+
+    otp = _generate_otp()
+    
+    # Store OTP in session with expiration (e.g., 5 minutes)
+    request.session['registration_otp'] = otp
+    request.session['registration_email'] = email
+    request.session['otp_expires_at'] = (timezone.now() + timedelta(minutes=5)).isoformat()
+    request.session['email_verified'] = False  # Reset verification status
+    
+    # Send email
+    subject = "Verify your email - Aspire Abroad"
+    body = f"Your verification code is: {otp}\n\nThis code will expire in 5 minutes."
+    
+    if send_email(email, subject, body):
+        return JsonResponse({'success': True, 'message': 'OTP sent successfully.'})
+    else:
+        return JsonResponse({'success': False, 'message': 'Failed to send OTP. Please try again.'}, status=500)
+
+
+def verify_otp_view(request):
+    """
+    Verify the OTP provided by the user.
+    Expects JSON payload: {"otp": "123456", "email": "user@example.com"}
+    """
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'message': 'Invalid request method.'}, status=405)
+
+    try:
+        data = json.loads(request.body)
+        user_otp = data.get('otp', '').strip()
+        email = data.get('email', '').strip()
+    except json.JSONDecodeError:
+        return JsonResponse({'success': False, 'message': 'Invalid JSON.'}, status=400)
+
+    session_otp = request.session.get('registration_otp')
+    session_email = request.session.get('registration_email')
+    expires_at_str = request.session.get('otp_expires_at')
+
+    if not session_otp or not session_email or not expires_at_str:
+        return JsonResponse({'success': False, 'message': 'No OTP request found. Please request a new code.'}, status=400)
+
+    if email != session_email:
+        return JsonResponse({'success': False, 'message': 'Email does not match the OTP request.'}, status=400)
+
+    # Check expiration
+    expires_at = timezone.datetime.fromisoformat(expires_at_str)
+    if timezone.now() > expires_at:
+        return JsonResponse({'success': False, 'message': 'OTP has expired. Please request a new one.'}, status=400)
+
+    if user_otp == session_otp:
+        request.session['email_verified'] = True
+        return JsonResponse({'success': True, 'message': 'Email verified successfully.'})
+    else:
+        return JsonResponse({'success': False, 'message': 'Invalid OTP.'}, status=400)
+
+
 def register_view(request):
     """
     Student Registration View
@@ -84,10 +168,27 @@ def register_view(request):
     if request.method == 'POST':
         form = StudentRegistrationForm(request.POST)
         if form.is_valid():
+            email = form.cleaned_data['email']
+            
+            # Verify email verification status
+            if not request.session.get('email_verified'):
+                messages.error(request, 'Please verify your email address.')
+                return render(request, 'accounts/register.html', {'form': form})
+            
+            if request.session.get('registration_email') != email:
+                messages.error(request, 'The verified email does not match the form email.')
+                return render(request, 'accounts/register.html', {'form': form})
+
             user = form.save(commit=False)
             user.role = 'STUDENT'
             user.set_password(form.cleaned_data['password'])
             user.save()
+            
+            # Clean up session
+            request.session.pop('email_verified', None)
+            request.session.pop('registration_email', None)
+            request.session.pop('registration_otp', None)
+            request.session.pop('otp_expires_at', None)
             
             messages.success(
                 request,
@@ -103,8 +204,6 @@ def register_view(request):
 def login_view(request):
     """
     Login View for both Students and Admins.
-    If user logs in with a temporary password (forgot-password flow), invalidate it
-    and redirect to force-change-password.
     """
     if request.user.is_authenticated:
         if getattr(request.session, 'get') and request.session.get('must_change_password'):
@@ -144,6 +243,10 @@ def login_view(request):
                         user.set_password(secrets.token_urlsafe(32))
                         user.temp_password_expires_at = None
                         user.save(update_fields=['password', 'temp_password_expires_at'])
+                        
+                        # Update session auth hash to prevent logout
+                        update_session_auth_hash(request, user)
+
                         messages.info(request, 'Please set a new password to continue.')
                         return redirect('auth:force_change_password')
 
@@ -162,116 +265,60 @@ def login_view(request):
 
 def forgot_password_view(request):
     """
-    Forgot password: email and/or phone. Non-enumeration (always generic success).
-    Rate limit: per-user 2/day, per-IP 10/hour. Audit log; send SMS/email via adapters.
+    Forgot password: Input username OR email.
+    If exists: send email with username and 8-digit temp password.
+    If not exists: Show "Student does not exist".
     """
     if request.user.is_authenticated:
         return redirect('students:dashboard')
 
-    ip = _get_client_ip(request)
-    user_agent = _get_user_agent(request)
-    max_per_ip = getattr(settings, 'PASSWORD_RESET_MAX_PER_IP_PER_HOUR', 10)
-    max_per_user = getattr(settings, 'PASSWORD_RESET_MAX_PER_USER_PER_DAY', 2)
-    valid_minutes = getattr(settings, 'PASSWORD_RESET_TEMP_VALID_MINUTES', 15)
-
     if request.method == 'POST':
         form = ForgotPasswordForm(request.POST)
         if form.is_valid():
-            # Per-IP throttle
-            ip_key = f'pwd_reset_ip:{ip}'
-            ip_count = cache.get(ip_key, 0)
-            if ip_count >= max_per_ip:
-                time.sleep(FORGOT_PASSWORD_RESPONSE_DELAY)
-                PasswordResetAuditLog.objects.create(
-                    user=None,
-                    ip_address=ip,
-                    user_agent=user_agent,
-                    result=PasswordResetAuditLog.RESULT_RATE_LIMIT_IP,
-                )
-                messages.success(
-                    request,
-                    'If an account exists with that email or phone, you will receive instructions shortly. Please check your inbox and messages.',
-                )
-                return render(request, 'accounts/forgot_password.html', {'form': ForgotPasswordForm()})
+            username_or_email = form.cleaned_data.get('username_or_email')
+            
+            # Find user by email or username, restricted to students
+            user = User.objects.filter(
+                (Q(email__iexact=username_or_email) | Q(username__iexact=username_or_email)) & 
+                Q(role='STUDENT')
+            ).first()
 
-            email = form.cleaned_data.get('email')
-            phone = form.cleaned_data.get('phone')
-            user = None
-            if email:
-                user = User.objects.filter(email__iexact=email, role='STUDENT').first()
-            if user is None and phone:
-                phone_clean = ''.join(c for c in phone if c.isdigit())
-                if phone_clean:
-                    user = User.objects.filter(phone_number__icontains=phone_clean, role='STUDENT').first()
-
-            if user is not None:
-                today = timezone.now().date()
-                count_today = PasswordResetAuditLog.objects.filter(
-                    user=user,
-                    requested_at__date=today,
-                    result=PasswordResetAuditLog.RESULT_SENT,
-                ).count()
-                if count_today >= max_per_user:
-                    time.sleep(FORGOT_PASSWORD_RESPONSE_DELAY)
-                    cache.set(ip_key, ip_count + 1, 3600)
-                    PasswordResetAuditLog.objects.create(
-                        user=user,
-                        ip_address=ip,
-                        user_agent=user_agent,
-                        email_attempted=False,
-                        sms_attempted=False,
-                        result=PasswordResetAuditLog.RESULT_RATE_LIMIT_USER,
-                    )
-                    messages.success(
-                        request,
-                        'If an account exists with that email or phone, you will receive instructions shortly. Please check your inbox and messages.',
-                    )
-                    return render(request, 'accounts/forgot_password.html', {'form': ForgotPasswordForm()})
-
-                # Invalidate any previous temp password
-                user.temp_password_expires_at = None
-                user.save(update_fields=['temp_password_expires_at'])
-                temp_password = _generate_temporary_password()
+            if user:
+                # Generate 8-digit temp password
+                temp_password = _generate_temporary_password(length=8)
                 user.set_password(temp_password)
+                
+                # Set expiration (15 mins)
+                valid_minutes = getattr(settings, 'PASSWORD_RESET_TEMP_VALID_MINUTES', 15)
                 expires_at = timezone.now() + timedelta(minutes=valid_minutes)
                 user.temp_password_expires_at = expires_at
+                
+                # Save changes
                 user.save(update_fields=['password', 'temp_password_expires_at'])
 
-                email_ok = False
-                sms_ok = False
+                # Send email
                 if getattr(settings, 'SEND_EMAIL_ENABLED', True) and user.email:
-                    body = f'Your temporary password is: {temp_password}\nIt is valid for {valid_minutes} minutes and can only be used once. After logging in you will be asked to set a new password.'
-                    email_ok = send_email(user.email, 'Password reset - Aspire Abroad', body)
-                if getattr(settings, 'SEND_SMS_ENABLED', False) and user.phone_number:
-                    msg = f'Aspire Abroad: Your one-time password is {temp_password}. Valid for {valid_minutes} min. Set a new password after login.'
-                    sms_ok = send_sms(user.phone_number, msg)
-
-                PasswordResetAuditLog.objects.create(
-                    user=user,
-                    ip_address=ip,
-                    user_agent=user_agent,
-                    email_attempted=bool(user.email),
-                    email_success=email_ok,
-                    sms_attempted=bool(user.phone_number),
-                    sms_success=sms_ok,
-                    result=PasswordResetAuditLog.RESULT_SENT,
-                )
-                cache.set(ip_key, ip_count + 1, 3600)
+                    subject = 'Password Reset - Aspire Abroad'
+                    body = (
+                        f"Hello {user.username},\n\n"
+                        f"We received a request to reset your password.\n"
+                        f"Your temporary password is: {temp_password}\n\n"
+                        f"This password is valid for {valid_minutes} minutes.\n"
+                        f"Please login using this temporary password and set a new password immediately."
+                    )
+                    send_email(user.email, subject, body)
+                    
+                    messages.success(
+                        request,
+                        'A temporary password has been sent to your registered email address.',
+                    )
+                else:
+                    # Fallback if email disabled or missing (though student should have email)
+                    messages.warning(request, 'Unable to send email. Please contact support.')
             else:
-                PasswordResetAuditLog.objects.create(
-                    user=None,
-                    ip_address=ip,
-                    user_agent=user_agent,
-                    result=PasswordResetAuditLog.RESULT_NO_MATCH,
-                )
-                cache.set(ip_key, ip_count + 1, 3600)
-
-            time.sleep(FORGOT_PASSWORD_RESPONSE_DELAY)
-            messages.success(
-                request,
-                'If an account exists with that email or phone, you will receive instructions shortly. Please check your inbox and messages.',
-            )
-            return render(request, 'accounts/forgot_password.html', {'form': ForgotPasswordForm()})
+                messages.error(request, 'Student does not exist.')
+            
+            return redirect('accounts:forgot_password')
     else:
         form = ForgotPasswordForm()
 
